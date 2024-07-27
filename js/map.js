@@ -5,6 +5,7 @@ class Map {
         this.wallGrid = new Uint8Array(size * size);
         this.skybox = new Bitmap('img/panorama.jpg', 2000, 750);
         this.wallTexture = new Bitmap('img/wall.jpg', 1024, 1024);
+        this.wallPaper = new Bitmap('img/wallpaper.png', 64, 64);
         this.light = 0;
     }
 
@@ -19,8 +20,9 @@ class Map {
     }
 
     randomize() {
-        for (let i = 0; i < this.size * this.size; i++)
-            this.wallGrid[i] = (Math.random() < 0.3) ? 1 : 0;
+        for (let i = 0; i < this.size * this.size; i++) {
+            this.wallGrid[i] = Math.random() < 0.3 ? Math.floor(Math.random() * 3) : 0;
+        }
     }
 
     update(seconds) {

@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const player = new Player(15.3, -1.2, Math.PI * 0.3);
     const map = new Map(32);
     const controls = new Controls();
-    const camera = new Camera(canvas, MOBILE ? 160 : 320, 0.8, map);
+    const itemDrawer = new Drawer(canvas);
+    const camera = new Camera(canvas, MOBILE ? 160 : 320, 0.8, map, itemDrawer);
     const loop = new GameLoop();
     const miniMap = new MiniMap(map, player);
 

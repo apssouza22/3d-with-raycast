@@ -57,7 +57,8 @@ class Raycaster {
     #inspect(step, shiftX, shiftY, distance, offset) {
         let dx = (this.cos < 0) ? shiftX : 0;
         let dy = (this.sin < 0) ? shiftY : 0;
-        step.height = this.map.get(step.x - dx, step.y - dy);
+        step.offsetValue = this.map.get(step.x - dx, step.y - dy);
+        step.height = step.offsetValue > 0 ? 1 : 0;
         step.totalDistance = distance + Math.sqrt(step.stepDistance);
         step.meta = this.metaFn(step, shiftX, shiftY, this.sin, this.cos);
         step.offset = offset - Math.floor(offset);
@@ -116,9 +117,15 @@ class RayStep {
         this.totalDistance = 0;
 
         /**
-         * Offset is used to determine the texture offset.
+         * The offset of the map. Map[offset].
          */
         this.offset = 0;
+
+        /**
+         * The offset value of the step. Map[offset] value.
+         * @type {number}
+         */
+        this.offsetValue = 0;
 
         /**
          * The metadata of the step.

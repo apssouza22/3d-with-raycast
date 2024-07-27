@@ -1,5 +1,19 @@
 class Camera {
-    constructor(canvas, resolution, focalLength, map) {
+    /**
+     * @type {Drawer}
+     */
+    itemDrawer
+
+    /**
+     * Create a new camera.
+     * @param {HTMLCanvasElement} canvas
+     * @param {number} resolution
+     * @param {number} focalLength
+     * @param {Map} map
+     * @param {Drawer} itemDrawer
+     */
+    constructor(canvas, resolution, focalLength, map, itemDrawer) {
+        this.itemDrawer = itemDrawer;
         this.ctx = canvas.getContext('2d');
         this.width = canvas.width = window.innerWidth * 0.5;
         this.height = canvas.height = window.innerHeight * 0.5;
@@ -7,12 +21,17 @@ class Camera {
         this.spacing = this.width / resolution;
         this.focalLength = focalLength || 0.8;
         this.maxDistance = MOBILE ? 8 : 14;
-        this.lightRange = 5;
+
         this.scale = (this.width + this.height) / 1200;
         this.raycast = new Raycaster(map, this.maxDistance, shadingProcessor);
         this.projection = new ColumnProjection(this.resolution, this.focalLength, map, this.raycast);
     }
 
+    /**
+     * Render the player, map, and weapon.
+     * @param {Player}player
+     * @param {Map}map
+     */
     render(player, map) {
         this.drawSky(player.direction, map.skybox, map.light);
         this.drawColumns(player, map);
@@ -40,13 +59,8 @@ class Camera {
     }
 
     drawColumns(player, map) {
-        this.ctx.save();
-
-        let columns  = this.projection.getColumns(player, map);
-        columns.forEach(column => {
-            this.drawItem(column, column.angle, map);
-        });
-        this.ctx.restore();
+        let columns3DProjected = this.projection.getColumns(player, map);
+        this.itemDrawer.draw(columns3DProjected, map, this.spacing, this.ctx);
     }
 
     drawWeapon(weapon, paces) {
@@ -57,27 +71,6 @@ class Camera {
         this.ctx.drawImage(weapon.image, left, top, weapon.width * this.scale, weapon.height * this.scale);
     }
 
-    drawItem(column, angle, map) {
-        const step = column.step
-        const texture = column.texture;
-        const wall = column.item;
-        const ctx = this.ctx;
-        const left = Math.floor(column.column * this.spacing);
-        const width = Math.ceil(this.spacing);
-        if (column.item) {
-            const textureX = Math.floor(texture.width * step.offset);
-
-            ctx.globalAlpha = 1;
-            ctx.drawImage(texture.image, textureX, 0, 1, texture.height, left, wall.top, width, wall.height);
-
-            ctx.fillStyle = '#000000';
-            ctx.globalAlpha = Math.max((step.totalDistance + step.meta.shading) / this.lightRange - map.light, 0);
-            ctx.fillRect(left, wall.top, width, wall.height);
-        }
-
-        ctx.fillStyle = '#ffffff';
-        ctx.globalAlpha = 0.15;
-    }
 }
 
 /**

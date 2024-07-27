@@ -1,3 +1,13 @@
+class ProjectionSlice{
+    constructor(textureX, item, column, texture, angle, step) {
+        this.textureX = textureX;
+        this.item = item;
+        this.column = column;
+        this.texture = texture;
+        this.angle = angle;
+        this.step = step;
+    }
+}
 class ColumnProjection {
     resolution;
     focalLength;
@@ -12,6 +22,13 @@ class ColumnProjection {
         this.height = window.innerHeight * 0.5;
     }
 
+    /**
+     * Get the columns of the projection. The columns are the vertical slices of the screen.
+     *
+     * @param {Player}player
+     * @param {Map}map
+     * @returns {ProjectionSlice[]}
+     */
     getColumns(player, map) {
         const columns = [];
         for (let column = 0; column < this.resolution; column++) {
@@ -24,6 +41,14 @@ class ColumnProjection {
         return columns;
     }
 
+    /**
+     * Get the column. The column is a vertical slice of the screen.
+     * @param {int} column
+     * @param {RayStep[]} raySteps
+     * @param {int} angle
+     * @param {Map} map
+     * @returns {ProjectionSlice}
+     */
     #getColumn(column, raySteps, angle, map) {
         const texture = map.wallTexture;
         let hit = -1;
@@ -34,14 +59,7 @@ class ColumnProjection {
                 const step = raySteps[s];
                 const textureX = Math.floor(texture.width * step.offset);
                 const item = this.#project3D(step.height, angle, step.totalDistance);
-                return {
-                    textureX: textureX,
-                    item: item,
-                    column: column,
-                    texture: texture,
-                    angle: angle,
-                    step: step,
-                }
+                return new ProjectionSlice(textureX, item, column, texture, angle, step);
             }
         }
         return {
