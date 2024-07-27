@@ -9,9 +9,8 @@ class Raycaster {
      * @param {number} maxDistance
      * @param {function} metaFn A function that returns the metadata for the ray step.
      */
-    constructor(map, maxDistance, metaFn = (rayStep) => {}, miniMap) {
+    constructor(map, maxDistance, metaFn = (rayStep) => {}) {
         this.map = map;
-        this.miniMap = miniMap;
         /**
          * It is the maximum distance that a ray can travel.
          */

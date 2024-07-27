@@ -1,47 +1,77 @@
-class Camera {
-    /**
-     * @type {Drawer}
-     */
-    itemDrawer
-
-    /**
-     * Create a new camera.
-     * @param {Canvas3D} canvas
-     * @param {Map} map
-     * @param {Drawer} itemDrawer
-     * @param miniMap
-     */
-    constructor(canvas,  map, itemDrawer, miniMap) {
-        this.miniMap = miniMap;
-        this.itemDrawer = itemDrawer;
-        this.raycast = new Raycaster(map, canvas.maxDistance, shadingProcessor, miniMap);
-        this.projection = new ViewProjection(canvas.resolution, canvas.focalLength, map, this.raycast);
+class MapItem {
+    constructor(position, column, step, angle) {
+        this.position = position;
+        this.column = column;
+        this.step = step;
+        this.angle = angle;
+        this.itemType = step.offsetValue
     }
-
-    /**
-     * Render the player, map, and weapon.
-     * @param {Player}player
-     * @param {Map}map
-     */
-    render(player, map) {
-        let columns3DProjected = this.projection.getObjects(player, player.direction);
-        this.miniMap.render(columns3DProjected);
-        this.itemDrawer.draw(columns3DProjected);
-    }
-
 }
 
-/**
- * Shading is used to determine the shading of the wall.
- */
-function shadingProcessor(step, shiftX, cos, sin) {
-    let shading = 0
-    if (shiftX)
-        shading = (cos < 0) ? 2 : 0;
-    else
-        shading = (sin < 0) ? 2 : 1;
+class Camera {
+    resolution;
+    focalLength;
+    raycast;
 
-    return {
-        shading: shading,
+    constructor(resolution, focalLength, raycast) {
+        this.resolution = resolution;
+        this.focalLength = focalLength;
+        this.raycast = raycast;
+        this.height = window.innerHeight * 0.5;
     }
+
+    /**
+     * Get the object within in the camera view
+     *
+     * @param {{x, y}}point
+     * @param {number}angleView
+     * @returns {MapItem[]}
+     */
+    getObjects(point, angleView) {
+        const objects = [];
+        for (let column = 0; column < this.resolution; column++) {
+            const x = column / this.resolution - 0.5;
+            const angle = Math.atan2(x, this.focalLength);
+            const raySteps = this.raycast.cast(point, angleView + angle);
+            let objectItem = this.#getObject(column, raySteps, angle);
+            if (objectItem) {
+                objects.push(objectItem);
+            }
+        }
+        return objects;
+    }
+
+    /**
+     * Get the object within the camera view found by the ray
+     * @param {int} column
+     * @param {RayStep[]} raySteps
+     * @param {int} angle
+     * @returns {MapItem}
+     */
+    #getObject(column, raySteps, angle) {
+        let hit = -1;
+        while (++hit < raySteps.length && raySteps[hit].height <= 0) ;
+
+        for (let s = raySteps.length - 1; s >= 0; s--) {
+            if (s !== hit) {
+                continue;
+            }
+            const step = raySteps[s];
+            return new MapItem({}, column, step, angle);
+        }
+    }
+
+
+    project3D(height, angle, distance) {
+        const z = distance * Math.cos(angle);
+        const wallHeight = this.height * height / z;
+        const bottom = this.height / 2 * (1 + 1 / z);
+
+        return {
+            top: bottom - wallHeight,
+            height: wallHeight
+        };
+    }
+
+
 }
