@@ -35,9 +35,10 @@ class ViewProjection {
             const angle = Math.atan2(x, this.focalLength);
             const raySteps = this.raycast.cast(point, angleView + angle);
             let objectItem = this.#getObject(column, raySteps, angle);
-            if (objectItem)
+            if (objectItem) {
                 objectItem.position = this.#project3D(objectItem.step.height, angle, objectItem.step.totalDistance);
                 objects.push(objectItem);
+            }
         }
         return objects;
     }

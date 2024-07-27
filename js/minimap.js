@@ -18,10 +18,31 @@ class MiniMap {
         document.body.appendChild(this.canvas);
     }
 
-    render() {
+    render(mapObjects) {
         this.clear();
         this.drawMap();
         this.drawPlayer();
+        this.drawRays(mapObjects);
+    }
+
+
+    drawRays(raySteps) {
+        this.context.strokeStyle = 'red';
+        this.context.lineWidth = 1;
+
+        raySteps.forEach(item => {
+            const step = item.step;
+            this.context.beginPath();
+            this.context.moveTo(
+                this.player.x * this.spacing,
+                this.player.y * this.spacing
+            );
+            this.context.lineTo(
+                step.x * this.spacing,
+                step.y * this.spacing
+            );
+            this.context.stroke();
+        });
     }
 
     clear() {

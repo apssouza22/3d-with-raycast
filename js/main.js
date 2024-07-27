@@ -8,9 +8,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     const map = new Map(32);
     const controls = new Controls();
     const itemDrawer = new Drawer(canvas3D, player, map);
-    const camera = new Camera(canvas3D, map, itemDrawer);
-    const loop = new GameLoop();
     const miniMap = new MiniMap(map, player);
+    const camera = new Camera(canvas3D, map, itemDrawer, miniMap);
+    const loop = new GameLoop();
 
     map.randomize();
 
@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
         map.update(seconds);
         player.update(controls.states, map, seconds);
         camera.render(player, map);
-        miniMap.render();
     });
 
 });
