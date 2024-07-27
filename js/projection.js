@@ -1,14 +1,13 @@
-class ProjectionSlice{
-    constructor(textureX, item, column, texture, angle, step) {
-        this.textureX = textureX;
-        this.item = item;
+class MapItem {
+    constructor(position, column, step) {
+        this.position = position;
         this.column = column;
-        this.texture = texture;
-        this.angle = angle;
         this.step = step;
+        this.itemType = step.offsetValue
     }
 }
-class ColumnProjection {
+
+class ViewProjection {
     resolution;
     focalLength;
     map;
@@ -23,49 +22,46 @@ class ColumnProjection {
     }
 
     /**
-     * Get the columns of the projection. The columns are the vertical slices of the screen.
+     * Get the object within in the camera view
      *
-     * @param {Player}player
-     * @param {Map}map
-     * @returns {ProjectionSlice[]}
+     * @param {{x, y}}point
+     * @param {number}angleView
+     * @returns {MapItem[]}
      */
-    getColumns(player, map) {
-        const columns = [];
+    getObjects(point, angleView) {
+        const objects = [];
         for (let column = 0; column < this.resolution; column++) {
             const x = column / this.resolution - 0.5;
             const angle = Math.atan2(x, this.focalLength);
-            const raySteps = this.raycast.cast(player, player.direction + angle);
-            let columnItem = this.#getColumn(column, raySteps, angle, map);
-            columns.push(columnItem);
+            const raySteps = this.raycast.cast(point, angleView + angle);
+            let objectItem = this.#getObject(column, raySteps, angle);
+            if (objectItem)
+                objectItem.position = this.#project3D(objectItem.step.height, angle, objectItem.step.totalDistance);
+                objects.push(objectItem);
         }
-        return columns;
+        return objects;
     }
 
     /**
-     * Get the column. The column is a vertical slice of the screen.
+     * Get the object within the camera view found by the ray
      * @param {int} column
      * @param {RayStep[]} raySteps
      * @param {int} angle
-     * @param {Map} map
-     * @returns {ProjectionSlice}
+     * @returns {MapItem}
      */
-    #getColumn(column, raySteps, angle, map) {
-        const texture = map.wallTexture;
+    #getObject(column, raySteps, angle) {
         let hit = -1;
         while (++hit < raySteps.length && raySteps[hit].height <= 0) ;
 
         for (let s = raySteps.length - 1; s >= 0; s--) {
-            if (s === hit) {
-                const step = raySteps[s];
-                const textureX = Math.floor(texture.width * step.offset);
-                const item = this.#project3D(step.height, angle, step.totalDistance);
-                return new ProjectionSlice(textureX, item, column, texture, angle, step);
+            if (s !== hit) {
+                continue;
             }
+            const step = raySteps[s];
+            return new MapItem({}, column, step);
         }
-        return {
-            column: column,
-        };
     }
+
 
     #project3D(height, angle, distance) {
         const z = distance * Math.cos(angle);
@@ -77,5 +73,6 @@ class ColumnProjection {
             height: wallHeight
         };
     }
+
 
 }

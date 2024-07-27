@@ -28,7 +28,9 @@ class Canvas3D {
         this.width = canvas.width = window.innerWidth * 0.5;
         this.height = canvas.height = window.innerHeight * 0.5;
         this.maxDistance = isMobile ? 8 : 14;
+        //resolution refers to the number of vertical slices (or columns) that the screen is divided into for the purpose of rendering the 3D scene
         this.resolution = isMobile ? 160 : 320;
+        // focalLength is the distance from the player to the projection plane (a measure of how "zoomed in" the view is).
         this.focalLength = 0.8;
     }
 }

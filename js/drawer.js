@@ -21,7 +21,7 @@ class Drawer {
 
     /**
      * Draw the columns on the screen.
-     * @param {ProjectionSlice[]}columns3DProjected
+     * @param {MapItem[]}columns3DProjected
      */
     draw(columns3DProjected) {
         this.drawSky();
@@ -31,7 +31,7 @@ class Drawer {
 
     /**
      * Draw the slices on the screen.
-     * @param {ProjectionSlice[]}columns3DProjected
+     * @param {MapItem[]}columns3DProjected
      */
     drawScreenSlices(columns3DProjected) {
         this.ctx.save();
@@ -75,16 +75,17 @@ class Drawer {
 
     /**
      * Draw the item on the screen.
-     * @param {ProjectionSlice} column
+     * @param {MapItem} column
      */
-    drawItem(column,) {
+    drawItem(column) {
+        if(!column) return;
         const map = this.map;
         const step = column.step
         const texture = this.wallTexture;
-        const wall = column.item;
+        const wall = column.position;
         const left = Math.floor(column.column * this.spacing);
         const width = Math.ceil(this.spacing);
-        if (column.item) {
+        if (column.position) {
             const textureX = Math.floor(texture.width * step.offset);
 
             this.ctx.globalAlpha = 1;

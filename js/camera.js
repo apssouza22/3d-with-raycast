@@ -13,7 +13,7 @@ class Camera {
     constructor(canvas,  map, itemDrawer) {
         this.itemDrawer = itemDrawer;
         this.raycast = new Raycaster(map, canvas.maxDistance, shadingProcessor);
-        this.projection = new ColumnProjection(canvas.resolution, canvas.focalLength, map, this.raycast);
+        this.projection = new ViewProjection(canvas.resolution, canvas.focalLength, map, this.raycast);
     }
 
     /**
@@ -26,7 +26,7 @@ class Camera {
     }
 
     drawColumns(player, map) {
-        let columns3DProjected = this.projection.getColumns(player, map);
+        let columns3DProjected = this.projection.getObjects(player, player.direction);
         this.itemDrawer.draw(columns3DProjected);
     }
 
