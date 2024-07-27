@@ -3,9 +3,7 @@ class Map {
         this.size = size;
         // wallGrid is a flattened version of the 2D grid
         this.wallGrid = new Uint8Array(size * size);
-        this.skybox = new Bitmap('img/panorama.jpg', 2000, 750);
         this.wallTexture = new Bitmap('img/wall.jpg', 1024, 1024);
-        this.wallPaper = new Bitmap('img/wallpaper.png', 64, 64);
         this.light = 0;
     }
 
