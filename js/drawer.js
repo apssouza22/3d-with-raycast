@@ -16,16 +16,16 @@ class Drawer {
         this.scale = (canvas.width + canvas.height) / 1200;
         this.skybox = new Bitmap('img/panorama.jpg', 2000, 750);
         this.wallTexture = new Bitmap('img/wall.jpg', 1024, 1024);
-        this.wallPaper = new Bitmap('img/wallpaper.png', 64, 64);
+        this.wallPaper = new Bitmap('img/wallpaper.png', 500, 730);
     }
 
     /**
      * Draw the columns on the screen.
-     * @param {MapItem[]}columns3DProjected
+     * @param {MapItem[]}objects
      */
-    draw(columns3DProjected) {
+    draw(objects) {
         this.drawSky();
-        this.drawScreenSlices(columns3DProjected);
+        this.drawObjects(objects);
         this.drawWeapon(this.player.weapon, this.player.paces);
     }
 
@@ -33,7 +33,7 @@ class Drawer {
      * Draw the slices on the screen.
      * @param {MapItem[]}columns3DProjected
      */
-    drawScreenSlices(columns3DProjected) {
+    drawObjects(columns3DProjected) {
         this.ctx.save();
         columns3DProjected.forEach(column => {
             this.drawItem(column);
@@ -75,17 +75,16 @@ class Drawer {
 
     /**
      * Draw the item on the screen.
-     * @param {MapItem} column
+     * @param {MapItem} object
      */
-    drawItem(column) {
-        if(!column) return;
+    drawItem(object) {
         const map = this.map;
-        const step = column.step
-        const texture = this.wallTexture;
-        const wall = column.position;
-        const left = Math.floor(column.column * this.spacing);
+        const step = object.step
+        const texture = object.itemType === 1 ? this.wallTexture : this.wallPaper;
+        const wall = object.position;
+        const left = Math.floor(object.column * this.spacing);
         const width = Math.ceil(this.spacing);
-        if (column.position) {
+        if (object.position) {
             const textureX = Math.floor(texture.width * step.offset);
 
             this.ctx.globalAlpha = 1;

@@ -19,7 +19,11 @@ class Map {
 
     randomize() {
         for (let i = 0; i < this.size * this.size; i++) {
-            this.wallGrid[i] = Math.random() < 0.3 ? Math.floor(Math.random() * 3) : 0;
+            if(Math.random() > 0.3){
+                this.wallGrid[i] = 0;
+                continue;
+            }
+            this.wallGrid[i] = Math.random() < 0.8 ? 1 : 2;
         }
     }
 

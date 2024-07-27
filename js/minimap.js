@@ -52,16 +52,21 @@ class MiniMap {
     drawMap() {
         for (let y = 0; y < this.map.size; y++) {
             for (let x = 0; x < this.map.size; x++) {
-                const hasWall = this.map.get(x, y);
-                if (hasWall) {
+                const hasObj = this.map.get(x, y);
+                if (!hasObj) {
+                    continue;
+                }
+                if (hasObj === 1) {
                     this.context.fillStyle = '#fff';
+                } else {
+                    this.context.fillStyle = 'yellow';
+                }
                     this.context.fillRect(
                         x * this.spacing,
                         y * this.spacing,
                         this.spacing,
                         this.spacing
                     );
-                }
             }
         }
     }
