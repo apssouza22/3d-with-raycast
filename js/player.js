@@ -1,3 +1,4 @@
+// Math.PI * 2 is a full circle in radians.
 const CIRCLE = Math.PI * 2;
 
 class Bitmap {
@@ -19,6 +20,7 @@ class Player {
     }
 
     rotate(angle) {
+        // The modulo operation is used to keep the angle within the range of 0 to 2π.
         this.direction = (this.direction + angle + CIRCLE) % CIRCLE;
     }
 
